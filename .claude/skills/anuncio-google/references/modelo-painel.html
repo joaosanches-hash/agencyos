@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de campanha Google Ads</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--fg:#1c1f23;--mut:#6b7280;--line:#e3e1db;--acc:#1a56db;--ok:#0f7b3f;--bad:#c0262d;--warn:#b45309;--chip:#eef2ff}
+@media(prefers-color-scheme:dark){:root{--bg:#101318;--card:#181d25;--fg:#eef0f3;--mut:#9aa3ad;--line:#2a313c;--acc:#7aa2ff;--ok:#4ade80;--bad:#ff7b80;--warn:#fbbf24;--chip:#1f2a44}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 Inter,system-ui,Segoe UI,Arial,sans-serif}
+header{padding:20px 5vw 8px}
+h1{margin:0;font-size:22px;letter-spacing:-.02em}
+.sub{color:var(--mut);font-size:13px}
+.status{display:inline-block;background:var(--warn);color:#fff;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:700;margin-left:8px;vertical-align:middle}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 5vw;display:flex;gap:6px;flex-wrap:wrap}
+nav button{border:1px solid var(--line);background:var(--card);color:var(--fg);padding:7px 12px;border-radius:8px;cursor:pointer;font:inherit;font-size:13px}
+nav button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+main{padding:16px 5vw 80px;max-width:1100px}
+section{display:none}section.on{display:block}
+h2{font-size:18px;margin:22px 0 6px}
+h3{font-size:14px;margin:18px 0 6px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0}
+.hint{color:var(--mut);font-size:13px;margin:2px 0 8px}
+.row{display:flex;gap:8px;align-items:stretch;margin:5px 0}
+.item{flex:1;display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:8px 11px;cursor:pointer;text-align:left;color:var(--fg);font:inherit;min-width:0}
+.item:hover{border-color:var(--acc)}
+.item.copied{background:var(--chip);border-color:var(--ok)}
+.item .t{overflow-wrap:anywhere}
+.cnt{font-size:12px;color:var(--mut);white-space:nowrap;font-variant-numeric:tabular-nums}
+.cnt.bad{color:var(--bad);font-weight:700}
+.pos{font-size:11px;color:var(--mut);width:28px;flex:none;display:flex;align-items:center}
+.btn{border:1px solid var(--acc);background:transparent;color:var(--acc);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+.btn:hover{background:var(--acc);color:#fff}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 10px}
+.tag{font-size:11px;background:var(--chip);color:var(--acc);border-radius:6px;padding:1px 7px;margin-left:6px}
+.kv{display:grid;grid-template-columns:170px 1fr;gap:6px 14px;font-size:14px}
+.kv b{color:var(--mut);font-weight:600}
+.alert{border-left:4px solid var(--bad);background:var(--card);padding:10px 14px;border-radius:8px;margin:10px 0}
+.alert.ok{border-color:var(--ok)}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+.chk input{margin-top:4px}
+.neg-cols{columns:2 280px;column-gap:16px}
+.toast{position:fixed;right:18px;bottom:18px;background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media(max-width:640px){.kv{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="titulo"></h1>
+  <div class="sub" id="sub"></div>
+</header>
+<nav id="nav"></nav>
+<main id="main"></main>
+<div class="toast" id="toast">Copiado</div>
+
+<script>
+/*DADOS-INICIO*/
+const CAMPANHA = {
+  "cliente": "Empresa Exemplo (modelo, substituir)",
+  "data": "AAAA-MM-DD",
+  "nome": "Search | Produto principal | Cidade",
+  "objetivo": "Leads (envio de formulário, clique no WhatsApp, ligação)",
+  "tipo": "Pesquisa (Search)",
+  "conversoes": [
+    {"nome": "Clique no WhatsApp", "origem": "Evento no site / GTM", "principal": true, "obs": "Validar no modo de visualização antes de ativar"}
+  ],
+  "config": {
+    "Rede": "Só Pesquisa. Desmarcar parceiros de pesquisa e Display",
+    "Localização": "[cidade e raio]. Opção: presença (não 'presença ou interesse')",
+    "Idioma": "Português",
+    "Verba diária": "R$ [confirmar]",
+    "Estratégia de lance": "Maximizar conversões, sem meta de CPA no início",
+    "Programação de anúncios": "[horário em que o cliente atende]",
+    "Dispositivos": "Todos, ajustar depois de 30 dias de dado",
+    "URL final": "https://exemplo.com.br/lp",
+    "Expansão de URL final / AI Max": "Desligado no início"
+  },
+  "grupos": [
+    {
+      "nome": "Grupo 1 | Tema",
+      "logica": "Quem busca X com intenção de comprar. Entra o que é transacional.",
+      "url": "https://exemplo.com.br/lp",
+      "palavras": [
+        {"t": "termo principal cidade", "c": "frase"},
+        {"t": "termo principal orcamento", "c": "exata"}
+      ],
+      "negativas": [],
+      "titulos": ["Título de exemplo 1", "Título de exemplo 2"],
+      "fixar": {"0": 1},
+      "descricoes": ["Descrição de exemplo com até noventa caracteres."],
+      "caminho": ["produto", "cidade"]
+    }
+  ],
+  "sitelinks": [
+    {"t": "Peça orçamento", "d1": "Resposta rápida", "d2": "Direto no WhatsApp", "url": "https://exemplo.com.br/lp"}
+  ],
+  "frases": ["Atendimento direto"],
+  "snippets": [{"cabecalho": "Serviços", "valores": ["Serviço A", "Serviço B", "Serviço C"]}],
+  "chamada": {"telefone": "(00) 00000-0000", "pais": "BR"},
+  "promocao": null,
+  "nomeEmpresa": "Empresa Exemplo",
+  "negativas": [
+    {"categoria": "Emprego e vagas", "termos": ["vaga", "emprego", "curriculo"]}
+  ],
+  "checklist": [
+    "Conversão principal criada e validada no modo de visualização",
+    "LP no ar, rápida no celular, com botão de contato visível",
+    "WhatsApp e telefone atendidos no horário da programação",
+    "Verba confirmada com o cliente",
+    "Lista de negativas aplicada na campanha",
+    "Campanha criada PAUSADA e conferida item a item antes de ativar"
+  ]
+};
+/*DADOS-FIM*/
+
+const L = {titulo:30, descricao:90, caminho:15, sitelink:25, sitelinkDesc:35, frase:25, snippet:25, empresa:25};
+const $ = (s, r=document) => r.querySelector(s);
+function el(tag, props={}, kids=[]){
+  const e = document.createElement(tag);
+  for (const [k,v] of Object.entries(props)){
+    if (k==='class') e.className = v; else if (k==='text') e.textContent = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+  }
+  (Array.isArray(kids)?kids:[kids]).forEach(c => c && e.append(c));
+  return e;
+}
+let tt;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1400)}
+async function copiar(txt, node){
+  try{ await navigator.clipboard.writeText(txt); }
+  catch(e){ const a=document.createElement('textarea'); a.value=txt; document.body.append(a); a.select(); try{document.execCommand('copy')}catch(_){} a.remove(); }
+  if(node){node.classList.add('copied');setTimeout(()=>node.classList.remove('copied'),900)}
+  toast('Copiado');
+}
+let estourados = 0;
+function campo(texto, limite, pos){
+  const n = [...texto].length, ruim = limite && n > limite;
+  if (ruim) estourados++;
+  const b = el('button', {class:'item', type:'button', title:'Clique para copiar', onclick:()=>copiar(texto,b)}, [
+    el('span',{class:'t',text:texto}),
+    el('span',{class:'cnt'+(ruim?' bad':''), text: limite ? `${n}/${limite}` : ''})
+  ]);
+  const row = el('div',{class:'row'}, [pos!=null ? el('span',{class:'pos',text:pos}) : null, b]);
+  return row;
+}
+function barraCopiar(rotulo, linhas){
+  return el('div',{class:'bar'},[el('button',{class:'btn',type:'button',onclick:()=>copiar(linhas.join('\n'))},`Copiar ${rotulo} (${linhas.length})`)]);
+}
+function fmtPalavra(p){
+  if (p.c==='exata') return `[${p.t}]`;
+  if (p.c==='frase') return `"${p.t}"`;
+  return p.t;
+}
+
+const abas = [];
+function aba(id, rotulo, build){
+  const s = el('section',{id}); build(s); abas.push({id,rotulo,s});
+}
+
+aba('geral','Visão geral', s=>{
+  const c = CAMPANHA;
+  s.append(el('h2',{text:'Campanha'}));
+  const kv = el('div',{class:'kv card'});
+  [['Nome',c.nome],['Tipo',c.tipo],['Objetivo',c.objetivo],['Nome da empresa (25 car.)',c.nomeEmpresa]].forEach(([k,v])=>{
+    kv.append(el('b',{text:k}), el('span',{text:v}));
+  });
+  s.append(kv);
+  s.append(el('div',{class:'hint',text:'Clique em qualquer item das próximas abas para copiar. Contador: texto/limite. Vermelho = passou do limite, ajustar antes de colar.'}));
+  s.append(el('h3',{text:'Nome da campanha (copiar)'}), campo(c.nome));
+  s.append(el('h3',{text:'Grupos de anúncios'}));
+  c.grupos.forEach(g=>{
+    s.append(el('div',{class:'card'},[el('b',{text:g.nome}), el('div',{class:'hint',text:g.logica||''}), el('div',{class:'sub',text:`${g.palavras.length} palavras-chave · ${g.titulos.length} títulos · ${g.descricoes.length} descrições`})]));
+  });
+});
+
+aba('conv','1. Conversão', s=>{
+  s.append(el('h2',{text:'Conversão: configurar ANTES de ativar'}));
+  s.append(el('div',{class:'alert'},[el('b',{text:'Sem conversão validada, não ativar. '}),'O Google otimiza para o que está marcado como conversão principal. Sem isso, ele otimiza para clique.']));
+  CAMPANHA.conversoes.forEach(v=>{
+    s.append(el('div',{class:'card'},[
+      el('b',{text:v.nome}), v.principal ? el('span',{class:'tag',text:'principal'}) : el('span',{class:'tag',text:'secundária'}),
+      el('div',{class:'hint',text:'Origem: '+v.origem}), el('div',{text:v.obs||''})
+    ]));
+  });
+});
+
+aba('cfg','2. Configurações', s=>{
+  s.append(el('h2',{text:'Configurações da campanha'}));
+  s.append(el('div',{class:'hint',text:'Siga a ordem: criar campanha > configurações abaixo > grupos > anúncios > extensões > negativas.'}));
+  Object.entries(CAMPANHA.config).forEach(([k,v])=>{
+    s.append(el('div',{class:'row'},[el('span',{class:'pos',text:''}), el('button',{class:'item',type:'button',onclick:function(){copiar(v,this)}},[el('span',{class:'t'},[el('b',{text:k+': '}), v])])]));
+  });
+});
+
+CAMPANHA.grupos.forEach((g,gi)=>{
+  aba('g'+gi, `Grupo ${gi+1}`, s=>{
+    s.append(el('h2',{text:g.nome}), el('div',{class:'hint',text:g.logica||''}));
+    s.append(el('h3',{text:'Nome do grupo'}), campo(g.nome));
+    s.append(el('h3',{text:'Palavras-chave'}));
+    s.append(el('div',{class:'hint',text:'Já formatadas: "frase", [exata] ou ampla sem símbolo. Cole direto na caixa de palavras-chave do grupo.'}));
+    const pal = g.palavras.map(fmtPalavra);
+    s.append(barraCopiar('todas as palavras-chave', pal));
+    g.palavras.forEach(p=>{
+      const t = fmtPalavra(p);
+      const b = el('button',{class:'item',type:'button',onclick:()=>copiar(t,b)},[el('span',{class:'t',text:t}),el('span',{class:'cnt',text:p.c})]);
+      s.append(el('div',{class:'row'},[b]));
+    });
+    if (g.negativas && g.negativas.length){
+      s.append(el('h3',{text:'Negativas só deste grupo'}), barraCopiar('negativas do grupo', g.negativas));
+      g.negativas.forEach(n=>s.append(campo(n)));
+    }
+    s.append(el('h3',{text:`Anúncio responsivo: títulos (${g.titulos.length}/15, máx. 30 caracteres)`}));
+    s.append(barraCopiar('todos os títulos', g.titulos));
+    g.titulos.forEach((t,i)=>{
+      const fx = g.fixar && g.fixar[String(i)];
+      const r = campo(t, L.titulo, i+1);
+      if (fx) $('.t', r).append(el('span',{class:'tag',text:`fixar na posição ${fx}`}));
+      s.append(r);
+    });
+    s.append(el('h3',{text:`Descrições (${g.descricoes.length}/4, máx. 90 caracteres)`}));
+    s.append(barraCopiar('todas as descrições', g.descricoes));
+    g.descricoes.forEach((t,i)=>s.append(campo(t, L.descricao, i+1)));
+    s.append(el('h3',{text:'URL final e caminhos de exibição (15 car. cada)'}));
+    s.append(campo(g.url));
+    (g.caminho||[]).forEach((c,i)=>s.append(campo(c, L.caminho, 'Cam.'+(i+1))));
+  });
+});
+
+aba('ext','Extensões', s=>{
+  const c = CAMPANHA;
+  s.append(el('h2',{text:'Extensões (ativos)'}));
+  s.append(el('h3',{text:'Nome da empresa (25)'}), campo(c.nomeEmpresa, L.empresa));
+  s.append(el('h3',{text:'Sitelinks (texto 25 · descrições 35)'}));
+  c.sitelinks.forEach((x,i)=>{
+    s.append(el('div',{class:'card'},[el('b',{text:`Sitelink ${i+1}`}), campo(x.t,L.sitelink), campo(x.d1,L.sitelinkDesc), campo(x.d2,L.sitelinkDesc), campo(x.url)]));
+  });
+  s.append(el('h3',{text:'Frases de destaque (25 cada)'}), barraCopiar('frases', c.frases));
+  c.frases.forEach(f=>s.append(campo(f,L.frase)));
+  s.append(el('h3',{text:'Snippets estruturados (valor 25, de 3 a 10 valores)'}));
+  c.snippets.forEach(sn=>{
+    s.append(el('div',{class:'card'},[el('b',{text:'Cabeçalho: '+sn.cabecalho}), ...sn.valores.map(v=>campo(v,L.snippet))]));
+  });
+  if (c.chamada) s.append(el('h3',{text:'Chamada'}), campo(c.chamada.telefone));
+  if (c.promocao) s.append(el('h3',{text:'Promoção (só se confirmada)'}), campo(JSON.stringify(c.promocao)));
+});
+
+aba('neg','Negativas', s=>{
+  const todas = [];
+  s.append(el('h2',{text:'Palavras-chave negativas (nível da campanha ou lista compartilhada)'}));
+  s.append(el('div',{class:'hint',text:'Crie uma lista de negativas e aplique na campanha. Cole cada categoria na lista. Revise o relatório de termos de pesquisa toda semana e acrescente o que aparecer.'}));
+  CAMPANHA.negativas.forEach(cat=>{ cat.termos.forEach(t=>todas.push(t)); });
+  s.append(barraCopiar('TODAS as negativas', todas));
+  const cols = el('div',{});
+  CAMPANHA.negativas.forEach(cat=>{
+    cols.append(el('h3',{text:`${cat.categoria} (${cat.termos.length})`}), barraCopiar(cat.categoria, cat.termos));
+    const w = el('div',{class:'neg-cols'});
+    cat.termos.forEach(t=>{
+      const b = el('button',{class:'item',type:'button',onclick:()=>copiar(t,b)},[el('span',{class:'t',text:t})]);
+      w.append(el('div',{class:'row'},[b]));
+    });
+    cols.append(w);
+  });
+  s.append(cols);
+});
+
+aba('chk','Checklist', s=>{
+  s.append(el('h2',{text:'Checklist de ativação'}));
+  s.append(el('div',{class:'hint',text:'Marque conforme confere. A marcação fica salva neste navegador.'}));
+  const key = 'chk:'+CAMPANHA.cliente+':'+CAMPANHA.data;
+  let salvo = {};
+  try{ salvo = JSON.parse(localStorage.getItem(key)||'{}'); }catch(e){}
+  CAMPANHA.checklist.forEach((t,i)=>{
+    const cb = el('input',{type:'checkbox'});
+    cb.checked = !!salvo[i];
+    cb.addEventListener('change',()=>{ salvo[i]=cb.checked; try{localStorage.setItem(key,JSON.stringify(salvo))}catch(e){} });
+    s.append(el('label',{class:'chk'},[cb, el('span',{text:t})]));
+  });
+});
+
+const nav = $('#nav'), main = $('#main');
+abas.forEach((a,i)=>{
+  main.append(a.s);
+  const b = el('button',{type:'button',text:a.rotulo,onclick:()=>abrir(a.id)});
+  b.dataset.id = a.id; nav.append(b);
+});
+function abrir(id){
+  abas.forEach(a=>a.s.classList.toggle('on',a.id===id));
+  [...nav.children].forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+  scrollTo(0,0);
+}
+$('#titulo').append(document.createTextNode(CAMPANHA.cliente+' · '), el('span',{text:'Google Ads'}), el('span',{class:'status',text:'PAUSADA'}));
+$('#sub').textContent = `${CAMPANHA.nome} · ${CAMPANHA.data}`;
+document.title = 'Painel Google Ads · '+CAMPANHA.cliente;
+if (estourados){
+  main.prepend(el('div',{class:'alert'},[el('b',{text:`${estourados} item(ns) acima do limite de caracteres. `}),'Procure os contadores em vermelho e reescreva antes de colar.']));
+} else {
+  main.prepend(el('div',{class:'alert ok'},[el('b',{text:'Todos os textos dentro dos limites do Google Ads.'})]));
+}
+abrir('geral');
+</script>
+</body>
+</html>

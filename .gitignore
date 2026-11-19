@@ -1,0 +1,18 @@
+# Credenciais e configurações locais
+.env
+.env.*
+*.key
+*.pem
+.claude/settings.local.json
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/
+
+# Arquivos temporários do Office
+~$*
+
+# Extrações brutas de CRM (conversas de clientes finais)
+clientes/*/dados/crm-*/
