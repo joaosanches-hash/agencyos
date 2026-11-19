@@ -3,8 +3,9 @@ name: novo-cliente
 description: >
   Cadastra um cliente novo na agência: copia o molde clientes/_modelo/ para
   clientes/<cliente>/, preenche a memória (empresa, estratégia, voz, ficha da
-  conta) a partir do que existir (transcripts de vendas e kickoff, handoff,
-  site, Instagram) e de uma entrevista curta, e registra na carteira. Use
+  conta) a partir dos documentos que o usuário colocar na pasta de entrada
+  (transcripts de vendas e kickoff, handoff, resumo, site, Instagram) e de uma
+  entrevista curta, e registra na carteira. Use
   quando o usuário disser "novo cliente", "cadastrar cliente", "entrou um
   cliente", "/novo-cliente" ou mandar material de um cliente que ainda não
   tem pasta.
@@ -19,23 +20,62 @@ minúsculas, sem acento, com hífen: "Acme Pisos & Cia" → `acme-pisos`.
 
 Se `clientes/<pasta>/` já existir, parar e avisar. Não sobrescrever.
 
-## Passo 2 — Criar a pasta
-
 Copiar `clientes/_modelo/` inteiro para `clientes/<pasta>/`, mantendo todas as
-subpastas (inclusive as vazias).
+subpastas (inclusive as vazias). A pasta `entrada/` vem junto: é a **pasta de
+distribuição**.
 
-## Passo 3 — Juntar o que já existe
+## Passo 2 — Pedir os documentos e a pasta de entrada
 
-Antes de perguntar qualquer coisa, procurar material:
+Com a pasta criada, perguntar, em uma mensagem só:
 
-- Arquivos que o usuário mandou junto com o pedido
-- Transcripts de reunião de vendas, kickoff ou handoff: mover ou copiar para
-  `clientes/<pasta>/transcripts/` com o nome `AAAA-MM-DD_descricao.md`
-- Site e Instagram do cliente, se o usuário passar os links (ler com WebFetch
-  quando disponível)
+> "Criei `clientes/<pasta>/`. Você tem documentação sobre esse cliente? Por
+> exemplo:
+> - gravação ou resumo da **reunião de vendas**
+> - gravação ou resumo do **kickoff**
+> - **handoff** (a passagem do comercial para o time)
+> - um **resumo completo** ou briefing do cliente
+> - contrato ou proposta, manual de marca, logo, fotos, criativos que já rodaram
+> - planilhas e exports de anúncio ou de CRM
+> - **site e Instagram** do cliente (cole os links aqui)
+>
+> Coloque os **arquivos** na pasta `clientes/<pasta>/entrada/`. Se já tiver
+> alguma informação digitada, pode escrever aqui na conversa. Quando terminar,
+> me avise com 'pode continuar'. Se não tiver nada, diga 'não tenho' e eu
+> sigo com perguntas."
 
-Ler tudo e extrair o que for fato. Transcript vence resumo quando houver
-divergência.
+Esperar a resposta. Não ler nada nem seguir antes do "pode continuar" ou do
+"não tenho". Se o usuário disser que o material vem depois, seguir só com o
+que existir e avisar no fim que a pasta `entrada/` pode ser usada depois,
+chamando o `/atualizar`.
+
+## Passo 3 — Ler e distribuir
+
+1. Listar tudo o que está em `entrada/` e ler cada arquivo (e o que o usuário
+   digitou na conversa).
+2. **Distribuir cada arquivo para a pasta certa**, movendo-o de `entrada/` e
+   renomeando no padrão `AAAA-MM-DD_descricao.ext` (data do documento; sem
+   data conhecida, a de hoje):
+
+| O que é | Vai para |
+|---|---|
+| Reunião de vendas, kickoff, handoff, resumo completo do cliente | `transcripts/` |
+| Export de anúncio ou CRM, planilha, print de dado, contrato, proposta | `dados/` |
+| Logo | `identidade/logo/` |
+| Manual de marca, guia visual, paleta | `identidade/` |
+| Anúncio, LP ou vídeo de outra marca para inspirar | `identidade/referencias/<estaticos\|lp\|videos>/` |
+| Fotos e criativos do próprio cliente | `marketing/criativos/` |
+
+   Arquivo que não se encaixa em nenhuma linha: **deixar em `entrada/`** e
+   perguntar ao usuário onde guardar. Nunca apagar nem sobrescrever nada.
+3. **Site e Instagram:** se os links vieram, ler (WebFetch quando
+   disponível). Se não vieram, perguntar uma vez: "Tem site ou Instagram do
+   cliente? Se tiver, cole aqui; se não, sigo sem." Sem resposta, seguir.
+4. Extrair o que for fato. Transcript vence resumo quando houver divergência.
+5. Mostrar uma lista curta do que foi para onde ("3 arquivos para
+   `transcripts/`, 1 para `dados/`, 1 ficou em `entrada/`") e seguir.
+
+Contrato, proposta e números do cliente são dado sensível: vão para `dados/` e
+**nunca** entram em entrega que o cliente repassa a terceiros.
 
 ## Passo 4 — Entrevista do que faltou
 

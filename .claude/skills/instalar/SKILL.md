@@ -52,7 +52,10 @@ e `_agencia/`). Se foi aberta a pasta de um cliente, avisar para reabrir na raiz
 ## Os cinco blocos
 
 **1. A agência**
-- Nome da agência (Instagram só se o usuário quiser dar; não insistir)
+- Nome da agência. Site e Instagram são **opcionais**: oferecer uma vez, em
+  uma linha ("se quiser colocar site ou Instagram, ajuda a calibrar; pode pular"),
+  nunca pedir de novo. Se não vierem, **não** deixar `[preencher]` nem listar como
+  pendência: retirar o campo
 - O que a agência faz, para quem e qual o foco. Resposta livre, não precisa
   caber em uma frase
 - Missão (se tiver)

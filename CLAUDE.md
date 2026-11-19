@@ -28,6 +28,8 @@ clientes/<cliente>/  cada conta, isolada
     estrategia.md      o momento atual: fase, meta, foco, pendências abertas
     historico.md       registro datado de decisões e reuniões (só cresce)
   identidade/          design-guide.md, logo/, referencias/ (estaticos/, lp/, videos/)
+  entrada/             pasta de distribuição: o usuário solta os documentos do
+                       cliente aqui e o /novo-cliente distribui para o lugar certo
   transcripts/         reuniões e handoff
   dados/               exports, planilhas, prints a analisar
   marketing/           landing-pages/, criativos/, roteiros/, campanhas/, seo/, conteudo/
@@ -88,6 +90,7 @@ real, avisar que o resultado é provisório.
 
 | O quê | Onde | Nome |
 |---|---|---|
+| Documento solto de cliente novo (antes de organizar) | `entrada/` | o `/novo-cliente` distribui |
 | Transcript de reunião, handoff | `transcripts/` | `AAAA-MM-DD_descricao.md` |
 | Export, planilha, print | `dados/` | `AAAA-MM-DD_fonte-descricao.ext` |
 | Landing page (blueprint + protótipo) | `marketing/landing-pages/<tema>/` | `blueprint.md`, `index.html` |

@@ -6,7 +6,7 @@
 ## Identidade
 
 **Nome:** [preencher]
-**Site / Instagram:** [preencher]
+**Site / Instagram:** (opcional)
 **Em uma frase:** [o que a agência faz e para quem. Ex.: "Growth para indústrias e serviços de alto ticket: tráfego pago, CRM e processo comercial."]
 **Missão:** [a frase que abre planejamentos e apresentações]
 

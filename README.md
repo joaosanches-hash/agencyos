@@ -85,6 +85,7 @@ clientes/
     CLAUDE.md    ficha da conta e regras dela
     memoria/     empresa · voz · estrategia · historico
     identidade/  design-guide da marca, logo, referências
+    entrada/     pasta de distribuição: solte os documentos do cliente novo aqui
     transcripts/ reuniões
     dados/       exports e planilhas
     marketing/   landing pages, criativos, roteiros
