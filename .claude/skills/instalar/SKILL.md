@@ -77,7 +77,7 @@ correta (clone feito dentro da própria pasta vazia): não perguntar nada.
 - **Aceitar material pronto.** Se o usuário colar um site, uma apresentação,
   um PDF ou um link, extrair as respostas dali e perguntar só o que faltou.
 - **"Não sei" é resposta válida.** Marcar `[preencher]` e seguir. Nada trava.
-- **Não inventar.** Método, missão ou equipe que o usuário não deu não entram.
+- **Não inventar.** Método ou equipe que o usuário não deu não entram.
 
 ## Os cinco blocos
 
@@ -88,7 +88,6 @@ correta (clone feito dentro da própria pasta vazia): não perguntar nada.
   pendência: retirar o campo
 - O que a agência faz, para quem e qual o foco. Resposta livre, não precisa
   caber em uma frase
-- Missão (se tiver)
 - Métodos, metodologias e pilares, e os segmentos que atende. Se o usuário
   passar o site ou uma apresentação, **pesquisar ali** antes de perguntar
 
