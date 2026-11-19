@@ -29,6 +29,10 @@ memória de cada cliente se mantém atualizada.
    sua agência). Sem Git: baixe o ZIP do repositório e extraia na pasta. Depois
    de clonar, desligue a ligação com o repositório original se for guardar
    dados de clientes: `git remote remove origin`.
+   Também dá para abrir uma pasta vazia e pedir ao Claude para clonar. Nesse
+   caso, **recarregue a janela do VS Code** (`Ctrl+Shift+P` → *Developer:
+   Reload Window*) ou feche e abra de novo depois do clone: as skills só
+   carregam quando a sessão começa dentro da pasta do projeto.
 2. **Abra a pasta no Claude Code.** No VS Code: *File → Open Folder*. No app
    Claude Desktop: aba *Code* → escolha a pasta.
 3. **Rode `/instalar`.** Uma entrevista de 5 blocos sobre a sua agência:
