@@ -39,6 +39,36 @@ assim**; só as skills que dependem daquilo ficam limitadas.
 Confirmar também que a pasta aberta é a **raiz** do AgencyOS (tem `.claude/skills/`
 e `_agencia/`). Se foi aberta a pasta de um cliente, avisar para reabrir na raiz.
 
+### Pasta dentro de pasta: tornar o AgencyOS a pasta principal
+
+Caso comum: a pessoa abriu uma pasta vazia (ex.: `teste-agencia`) e o `git clone`
+criou o AgencyOS **dentro** dela (`teste-agencia/agencyos`). Detectar assim: a
+pasta aberta **não** tem `_agencia/` e `.claude/skills/`, mas uma subpasta tem.
+
+Perguntar uma vez, em uma mensagem:
+
+> "O AgencyOS ficou dentro de `<pasta-aberta>/<subpasta>`. Quer que eu torne
+> `<subpasta>` a pasta principal? Eu movo ela para fora, apago `<pasta-aberta>`
+> (só se sobrar vazia) e você reabre o VS Code na pasta nova. Que nome quer
+> para a pasta? (padrão: `agencyos`)"
+
+Com o "sim":
+
+1. Mover a subpasta para o nível acima da pasta aberta, com o nome escolhido
+   (se já existir uma pasta com esse nome ali, parar e perguntar outro)
+2. Apagar a pasta aberta **somente se estiver vazia** (`rmdir`, sem `-r` nem
+   `-Force`). Se sobrar qualquer arquivo, não apagar e avisar
+3. Dizer o caminho novo e orientar: *File → Open Folder* nessa pasta, abrir o
+   Claude Code e rodar `/instalar` de novo. A entrevista ainda não começou, então
+   nada se perde
+4. Se o Windows recusar o movimento por a pasta estar em uso, não insistir:
+   passar os passos manuais (fechar o VS Code, mover a pasta pelo Explorer,
+   abrir a pasta nova)
+
+Com o "não": seguir normalmente, mas avisar que o VS Code deve abrir a pasta
+interna (a que tem `_agencia/`) para o sistema funcionar direito. Pasta já
+correta (clone feito dentro da própria pasta vazia): não perguntar nada.
+
 ## Como conduzir
 
 - **Blocos, não interrogatório.** Cinco blocos de perguntas, um por mensagem.
